@@ -1,0 +1,253 @@
+{
+  "entities": {
+    "institutions": {
+      "title": "Institutions",
+      "description": "Accredited universities and partner academic institutions in NEXORA",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "code": { "type": "string" },
+        "name": { "type": "string" },
+        "domain": { "type": "string" },
+        "status": { "type": "string", "enum": ["Active", "Suspended"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "code", "name"]
+    },
+    "faculties": {
+      "title": "Faculties",
+      "description": "University faculties scoped to an institution",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "institutionId": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" }
+      },
+      "required": ["id", "institutionId", "name"]
+    },
+    "programs": {
+      "title": "Academic Programs",
+      "description": "Degree programs offered by a faculty",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "institutionId": { "type": "string" },
+        "facultyId": { "type": "string" },
+        "name": { "type": "string" },
+        "degreeLevel": { "type": "string" }
+      },
+      "required": ["id", "institutionId", "name"]
+    },
+    "kg_nodes": {
+      "title": "Knowledge Graph Nodes",
+      "description": "Authoritative versioned nodes across Academic, Competency, Course, Learner, and Opportunity Graph domains",
+      "type": "object",
+      "properties": {
+        "nodeId": { "type": "string" },
+        "nodeType": {
+          "type": "string",
+          "enum": [
+            "Institution",
+            "Faculty",
+            "Program",
+            "Course",
+            "Outcome",
+            "CompetencyCluster",
+            "Competency",
+            "Skill",
+            "MicroSkill",
+            "Concept",
+            "Resource",
+            "Assessment",
+            "Rubric",
+            "Opportunity"
+          ]
+        },
+        "institutionId": { "type": "string" },
+        "canonicalCode": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "observableIndicators": { "type": "array", "items": { "type": "string" } },
+        "proficiencyCriteria": { "type": "string" },
+        "status": { "type": "string", "enum": ["Draft", "Active", "Deprecated", "Pending Approval"] },
+        "version": { "type": "string" },
+        "provenance": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["nodeId", "nodeType", "institutionId", "canonicalCode", "name", "status", "version"]
+    },
+    "kg_edges": {
+      "title": "Knowledge Graph Edges",
+      "description": "Authoritative directional relationships between Knowledge Graph nodes with cycle and duplicate prevention",
+      "type": "object",
+      "properties": {
+        "edgeId": { "type": "string" },
+        "institutionId": { "type": "string" },
+        "sourceNodeId": { "type": "string" },
+        "relationshipType": {
+          "type": "string",
+          "enum": [
+            "HAS_FACULTY",
+            "OFFERS_PROGRAM",
+            "CONTAINS_COURSE",
+            "HAS_LEARNING_OUTCOME",
+            "COURSE_SUPPORTS_OUTCOME",
+            "BELONGS_TO_PROGRAM",
+            "CONTAINS_COMPETENCY",
+            "CONTAINS_SKILL",
+            "CONTAINS_MICRO_SKILL",
+            "PART_OF",
+            "CONTAINS",
+            "SUPPORTS",
+            "REQUIRES",
+            "EXPLAINS",
+            "ASSESSES",
+            "DEVELOPS",
+            "ALIGNS_WITH",
+            "RELATED_TO",
+            "REQUIRES_SKILL",
+            "RECOMMENDS_SKILL"
+          ]
+        },
+        "targetNodeId": { "type": "string" },
+        "status": { "type": "string", "enum": ["Draft", "Active", "Deprecated"] },
+        "version": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "provenance": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["edgeId", "institutionId", "sourceNodeId", "relationshipType", "targetNodeId", "status"]
+    },
+    "graph_versions": {
+      "title": "Graph & Taxonomy Versions",
+      "description": "Version history and impact analysis for Knowledge Graph changes",
+      "type": "object",
+      "properties": {
+        "versionId": { "type": "string" },
+        "institutionId": { "type": "string" },
+        "targetNodeId": { "type": "string" },
+        "previousVersion": { "type": "string" },
+        "proposedVersion": { "type": "string" },
+        "changeSummary": { "type": "string" },
+        "affectedCourses": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["Pending Approval", "Approved", "Archived"] },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "learner_skill_records": {
+      "title": "Learner Skill Records",
+      "description": "Dynamic student mastery records separated from official competency taxonomy definitions",
+      "type": "object",
+      "properties": {
+        "recordId": { "type": "string" },
+        "studentId": { "type": "string" },
+        "skillNodeId": { "type": "string" },
+        "masteryStatus": {
+          "type": "string",
+          "enum": ["Not Assessed", "Emerging", "Developing", "Proficient", "Advanced", "Needs Reassessment"]
+        },
+        "score": { "type": "number" },
+        "evidenceReferences": { "type": "array", "items": { "type": "string" } },
+        "evidenceType": { "type": "string" },
+        "confidence": { "type": "string" },
+        "validationStatus": { "type": "string" },
+        "assessedAt": { "type": "string" },
+        "evaluatedBy": { "type": "string" }
+      },
+      "required": ["recordId", "studentId", "skillNodeId", "masteryStatus"]
+    },
+    "import_jobs": {
+      "title": "Data Import Jobs",
+      "description": "Controlled CSV and JSON batch import history and validation reports",
+      "type": "object",
+      "properties": {
+        "jobId": { "type": "string" },
+        "institutionId": { "type": "string" },
+        "format": { "type": "string", "enum": ["CSV", "JSON"] },
+        "dataType": { "type": "string" },
+        "totalRecords": { "type": "integer" },
+        "validRecords": { "type": "integer" },
+        "errorCount": { "type": "integer" },
+        "duplicateCount": { "type": "integer" },
+        "status": { "type": "string", "enum": ["Dry-Run Validated", "Imported", "Rejected"] },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" }
+      }
+    },
+    "users": {
+      "title": "Users",
+      "description": "User account records for Students, Lecturers, and Industry Partners",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["student", "lecturer", "industry"] },
+        "institutionId": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "organizations": {
+      "title": "Organizations",
+      "description": "Industry partner company profiles and verification status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "sector": { "type": "string" },
+        "website": { "type": "string" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "verifiedStatus": { "type": "string", "enum": ["verified", "pending", "unverified", "rejected", "suspended"] },
+        "partnershipStatus": { "type": "string" }
+      }
+    },
+    "opportunities": {
+      "title": "Opportunities",
+      "description": "Internships, challenges, projects, mentoring, and fellowships",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "organizationId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "publicationStatus": { "type": "string", "enum": ["Draft", "Submitted for Review", "Needs Revision", "Approved", "Published", "Rejected", "Expired", "Archived"] },
+        "deadline": { "type": "string" },
+        "officialUrl": { "type": "string" }
+      }
+    },
+    "student_interest": {
+      "title": "Student Interest & Consent",
+      "description": "Consent-based student interest records shared with partner organizations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "opportunityId": { "type": "string" },
+        "studentId": { "type": "string" },
+        "consentGranted": { "type": "boolean" },
+        "sharedFields": { "type": "array", "items": { "type": "string" } },
+        "timestamp": { "type": "string" }
+      }
+    },
+    "audit_logs": {
+      "title": "Audit Logs",
+      "description": "Immutable audit trail for role actions, reviews, graph mutations, and consent events",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "actorId": { "type": "string" },
+        "action": { "type": "string" },
+        "targetId": { "type": "string" },
+        "timestamp": { "type": "string" }
+      }
+    }
+  }
+}

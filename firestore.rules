@@ -1,0 +1,408 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // NEXORA PRD 06 — HARDENED MULTI-TENANT FIRESTORE SECURITY RULES
+    // Default-Deny · Active Account Verification · Tenant Isolation
+    // Field-Level Write Guards · Consent Enforcement · Append-Only Audit
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Account must be Active (blocks Suspended, Deactivated, Access Revoked, Pending)
+    function isActiveAccount() {
+      return isAuthenticated() &&
+        (!('accountStatus' in getUserData()) || getUserData().accountStatus == 'Active');
+    }
+
+    function isOwner(userId) {
+      return isActiveAccount() && request.auth.uid == userId;
+    }
+
+    function isStudent() {
+      return isActiveAccount() && getUserData().role == 'student';
+    }
+
+    function isLecturer() {
+      return isActiveAccount() && getUserData().role == 'lecturer';
+    }
+
+    function isIndustry() {
+      return isActiveAccount() && getUserData().role == 'industry';
+    }
+
+    function isProgramAdmin() {
+      return isActiveAccount() &&
+        ((getUserData().role == 'lecturer' && getUserData().isProgramAdmin == true) ||
+         getUserData().institutionalRoleLabel == 'Academic Administrator');
+    }
+
+    function isOpportunityReviewer() {
+      return isActiveAccount() &&
+        (isProgramAdmin() ||
+         getUserData().isOpportunityReviewer == true ||
+         getUserData().institutionalRoleLabel == 'Authorized Opportunity Reviewer');
+    }
+
+    function isInstitutionalAdmin() {
+      return isActiveAccount() &&
+        (getUserData().isInstitutionalAdmin == true ||
+         getUserData().institutionalRoleLabel == 'Institutional Administrator' ||
+         (request.auth.token.email == "callmeito22@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isTechnicalAdmin() {
+      return isActiveAccount() &&
+        (getUserData().institutionalRoleLabel == 'Technical Administrator' ||
+         getUserData().isTechnicalAdmin == true);
+    }
+
+    function isSuperAdmin() {
+      return isActiveAccount() &&
+        (getUserData().institutionalRoleLabel == 'Platform Super Administrator' ||
+         (request.auth.token.email == "callmeito22@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    // Multi-tenant institution isolation
+    function isSameInstitution(instId) {
+      return isActiveAccount() &&
+        (!('institutionId' in getUserData()) || getUserData().institutionId == instId);
+    }
+
+    // Multi-tenant industry organization isolation
+    function isOrgMember(orgId) {
+      return isIndustry() && getUserData().organizationId == orgId;
+    }
+
+    // Prevent tampering with tenant or organization identifiers on update
+    function institutionImmutable() {
+      return !('institutionId' in request.resource.data) ||
+        !('institutionId' in resource.data) ||
+        request.resource.data.institutionId == resource.data.institutionId;
+    }
+
+    function organizationImmutable() {
+      return !('organizationId' in request.resource.data) ||
+        !('organizationId' in resource.data) ||
+        request.resource.data.organizationId == resource.data.organizationId;
+    }
+
+    function validShortString(field, maxLen) {
+      return !(field in request.resource.data) ||
+        (request.resource.data[field] is string && request.resource.data[field].size() <= maxLen);
+    }
+
+    // 1. Users Collection (Restricted — No Client Role Escalation)
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isInstitutionalAdmin() || isTechnicalAdmin() || isSuperAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == userId &&
+        request.resource.data.role in ['student', 'lecturer', 'industry'] &&
+        (!('isProgramAdmin' in request.resource.data) || request.resource.data.isProgramAdmin == false) &&
+        (!('isInstitutionalAdmin' in request.resource.data) || request.resource.data.isInstitutionalAdmin == false) &&
+        validShortString('name', 120) &&
+        validShortString('email', 150);
+      allow update: if (isOwner(userId) &&
+          !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['role', 'roles', 'accountStatus', 'institutionId', 'organizationId', 'isProgramAdmin', 'isOpportunityReviewer', 'isInstitutionalAdmin', 'isTechnicalAdmin']) &&
+          validShortString('name', 120))
+        || isInstitutionalAdmin()
+        || isTechnicalAdmin()
+        || isSuperAdmin();
+      allow delete: if false;
+    }
+
+    // 2. Institutions Collection (Institutional / Restricted Settings)
+    match /institutions/{institutionId} {
+      allow read: if isSameInstitution(institutionId) || isSuperAdmin();
+      allow create, update: if (isInstitutionalAdmin() && isSameInstitution(institutionId)) || isSuperAdmin();
+      allow delete: if false;
+    }
+
+    // 3. Courses Collection (Multi-Tenant & Assigned Lecturer Scope)
+    match /courses/{courseId} {
+      allow read: if isActiveAccount() &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId));
+      allow create: if (isProgramAdmin() || isInstitutionalAdmin()) &&
+        validShortString('code', 40) &&
+        validShortString('name', 200);
+      allow update: if institutionImmutable() &&
+        ((isLecturer() && resource.data.instructorId == request.auth.uid) ||
+         (isProgramAdmin() && (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId))) ||
+         isInstitutionalAdmin());
+      allow delete: if isInstitutionalAdmin();
+    }
+
+    // 4. Course Knowledge Graph Nodes, Edges, Versions & Import Jobs
+    match /knowledge_graph_nodes/{nodeId} {
+      allow read: if isActiveAccount() &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId));
+      allow create, update: if institutionImmutable() &&
+        (isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+        (!('institutionId' in request.resource.data) || isSameInstitution(request.resource.data.institutionId)) &&
+        validShortString('label', 180) &&
+        validShortString('code', 60);
+      allow delete: if isProgramAdmin() || isInstitutionalAdmin();
+    }
+
+    match /knowledge_graph_edges/{edgeId} {
+      allow read: if isActiveAccount() &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId));
+      allow create, update: if institutionImmutable() &&
+        (isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+        request.resource.data.source != request.resource.data.target;
+      allow delete: if isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+    }
+
+    match /knowledge_graph_versions/{versionId} {
+      allow read: if isActiveAccount() &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId));
+      allow create: if isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow update: if isProgramAdmin() || isInstitutionalAdmin();
+      allow delete: if false;
+    }
+
+    match /import_jobs/{jobId} {
+      allow read: if isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow create: if isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow update, delete: if false;
+    }
+
+    // 5. Learner Profiles (Confidential — Privacy Isolated from Industry & Technical Admins)
+    match /learner_profiles/{profileId} {
+      allow read: if (isStudent() && resource.data.userId == request.auth.uid) ||
+        ((isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+         (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId)));
+      allow create: if isStudent() && request.resource.data.userId == request.auth.uid;
+      allow update: if institutionImmutable() &&
+        ((isStudent() && resource.data.userId == request.auth.uid &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['academicGoal', 'careerGoal', 'interests', 'learningPreferences', 'onboardingCompleted', 'updatedAt'])) ||
+         (isProgramAdmin() && (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId))));
+      allow delete: if false;
+    }
+
+    // 6. Student Skills & Official Competency Mastery Records (Confidential)
+    match /student_skills/{recordId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        ((isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+         (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId)));
+      allow create: if ((isLecturer() || isProgramAdmin()) &&
+          (!('institutionId' in request.resource.data) || isSameInstitution(request.resource.data.institutionId))) ||
+        (isStudent() && request.resource.data.studentId == request.auth.uid &&
+          request.resource.data.score == 0 &&
+          request.resource.data.verifiedByLecturer == false);
+      allow update: if institutionImmutable() &&
+        (((isLecturer() || isProgramAdmin()) &&
+          (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId))) ||
+         (isStudent() && resource.data.studentId == request.auth.uid &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['selfAssessedConfidence', 'lastAssessedAt'])));
+      allow delete: if false;
+    }
+
+    // 7. Flexible Learning Groups & Rubrics
+    match /learning_groups/{groupId} {
+      allow read: if isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow create, update: if institutionImmutable() && (isLecturer() || isProgramAdmin());
+      allow delete: if isLecturer() || isProgramAdmin();
+    }
+
+    match /rubrics/{rubricId} {
+      allow read: if isActiveAccount() &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId));
+      allow create, update: if institutionImmutable() && (isLecturer() || isProgramAdmin());
+      allow delete: if isProgramAdmin();
+    }
+
+    // 8. Evidence Reviews & Submissions (Confidential — Blocked from Technical Admins & Self-Approval)
+    match /evidence_reviews/{reviewId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        ((isLecturer() || isProgramAdmin()) &&
+         (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId)));
+      allow create: if isStudent() &&
+        request.resource.data.studentId == request.auth.uid &&
+        request.resource.data.status in ['draft', 'pending', 'submitted'] &&
+        !('verifiedAt' in request.resource.data) &&
+        validShortString('title', 200);
+      allow update: if institutionImmutable() &&
+        ((isStudent() && resource.data.studentId == request.auth.uid &&
+          resource.data.status in ['draft', 'revision_requested'] &&
+          request.resource.data.status in ['draft', 'pending', 'submitted'] &&
+          !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['verifiedAt', 'validatorName', 'lecturerFeedback'])) ||
+         ((isLecturer() || isProgramAdmin()) &&
+          (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId))));
+      allow delete: if isStudent() &&
+        resource.data.studentId == request.auth.uid &&
+        resource.data.status == 'draft';
+    }
+
+    // 9. Mapping Approvals
+    match /mapping_approvals/{approvalId} {
+      allow read: if isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow create: if isLecturer() || isProgramAdmin();
+      allow update: if (isProgramAdmin() || isInstitutionalAdmin()) &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId));
+      allow delete: if false;
+    }
+
+    // 10. Industry Organizations (Organization Isolation & University Verification Control)
+    match /organizations/{orgId} {
+      allow read: if isOrgMember(orgId) || isOpportunityReviewer() || isInstitutionalAdmin() || isSuperAdmin() ||
+        (isActiveAccount() && resource.data.verifiedStatus == 'verified');
+      allow create: if isIndustry() &&
+        request.resource.data.verifiedStatus == 'pending' &&
+        validShortString('name', 160);
+      allow update: if organizationImmutable() &&
+        ((isOrgMember(orgId) &&
+          !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['verifiedStatus', 'partnershipStatus', 'partnerUniversities'])) ||
+         isInstitutionalAdmin() ||
+         isOpportunityReviewer() ||
+         isSuperAdmin());
+      allow delete: if false;
+    }
+
+    // 11. Opportunities (Industry Cannot Self-Approve; Students Read Published Only)
+    match /opportunities/{oppId} {
+      allow read: if (isActiveAccount() && resource.data.publicationStatus == 'Published') ||
+        (isIndustry() && isOrgMember(resource.data.organizationId)) ||
+        isLecturer() ||
+        isOpportunityReviewer() ||
+        isInstitutionalAdmin();
+      allow create: if isIndustry() &&
+        isOrgMember(request.resource.data.organizationId) &&
+        request.resource.data.publicationStatus in ['Draft', 'Submitted for Review'] &&
+        (!('reviewStatus' in request.resource.data) || request.resource.data.reviewStatus == 'pending') &&
+        validShortString('title', 200);
+      allow update: if organizationImmutable() && institutionImmutable() &&
+        ((isIndustry() && isOrgMember(resource.data.organizationId) &&
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['reviewStatus', 'reviewerFeedback']) &&
+          (request.resource.data.publicationStatus in ['Draft', 'Submitted for Review', 'Archived'] ||
+           (resource.data.reviewStatus == 'approved' && request.resource.data.publicationStatus == 'Published'))) ||
+         ((isOpportunityReviewer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+          (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId))));
+      allow delete: if isIndustry() &&
+        isOrgMember(resource.data.organizationId) &&
+        resource.data.publicationStatus == 'Draft';
+    }
+
+    // 12. Flagged Competencies & Collaboration Projects
+    match /flagged_competencies/{flagId} {
+      allow read: if (isIndustry() && isOrgMember(resource.data.organizationId)) ||
+        isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow create: if isIndustry() &&
+        isOrgMember(request.resource.data.organizationId) &&
+        validShortString('plainLanguageRequirement', 300);
+      allow update: if isProgramAdmin() || isInstitutionalAdmin();
+      allow delete: if false;
+    }
+
+    match /collaboration_projects/{projectId} {
+      allow read: if (isIndustry() && isOrgMember(resource.data.organizationId)) ||
+        isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow create: if isIndustry() &&
+        isOrgMember(request.resource.data.organizationId) &&
+        validShortString('title', 200);
+      allow update: if organizationImmutable() &&
+        ((isIndustry() && isOrgMember(resource.data.organizationId) &&
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status'])) ||
+         isLecturer() || isProgramAdmin() || isInstitutionalAdmin());
+      allow delete: if false;
+    }
+
+    // 13. Student Interest & Explicit Consent Shares (Confidential — Revocation & Expiration Enforced)
+    match /student_interest/{interestId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        (isIndustry() &&
+         isOrgMember(resource.data.organizationId) &&
+         resource.data.consentGranted == true &&
+         (!('consentExpired' in resource.data) || resource.data.consentExpired == false)) ||
+        isInstitutionalAdmin();
+      allow create: if isStudent() &&
+        request.resource.data.studentId == request.auth.uid &&
+        request.resource.data.consentGranted == true;
+      allow update: if isStudent() &&
+        resource.data.studentId == request.auth.uid &&
+        request.resource.data.studentId == resource.data.studentId &&
+        request.resource.data.organizationId == resource.data.organizationId;
+      allow delete: if isStudent() && resource.data.studentId == request.auth.uid;
+    }
+
+    // 14. Append-Only Security & Governance Audit Logs (Restricted — Immutable)
+    match /audit_logs/{logId} {
+      allow read: if (isProgramAdmin() || isInstitutionalAdmin() || isTechnicalAdmin() || isSuperAdmin()) &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId) || isSuperAdmin());
+      allow create: if isActiveAccount() &&
+        validShortString('action', 300) &&
+        validShortString('actorName', 150);
+      allow update, delete: if false;
+    }
+
+    // 15. PRD 07 Recommendation Intelligence Collections (Multi-Tenant & Privacy-Isolated)
+    match /recommendation_runs/{runId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        ((isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+         (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId)));
+      allow create: if isActiveAccount() &&
+        (!('institutionId' in request.resource.data) || isSameInstitution(request.resource.data.institutionId));
+      allow update, delete: if false;
+    }
+
+    match /recommendations/{recommendationId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        ((isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+         (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId)));
+      allow create, update: if isActiveAccount() && institutionImmutable() &&
+        ((isStudent() && request.resource.data.studentId == request.auth.uid) ||
+         isLecturer() || isProgramAdmin() || isInstitutionalAdmin());
+      allow delete: if false;
+    }
+
+    match /recommendation_feedback/{feedbackId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        ((isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+         (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId)));
+      allow create, update: if (isStudent() && request.resource.data.studentId == request.auth.uid) ||
+        isLecturer() || isProgramAdmin();
+      allow delete: if isStudent() && resource.data.studentId == request.auth.uid;
+    }
+
+    match /recommendation_configurations/{configId} {
+      allow read: if isActiveAccount() &&
+        (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId));
+      allow create, update: if (isProgramAdmin() || isInstitutionalAdmin() || isSuperAdmin()) &&
+        institutionImmutable();
+      allow delete: if false;
+    }
+
+    match /recommendation_events/{eventId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        isProgramAdmin() || isInstitutionalAdmin() || isTechnicalAdmin();
+      allow create: if isActiveAccount();
+      allow update, delete: if false;
+    }
+
+    match /skill_gap_reports/{reportId} {
+      allow read: if (isStudent() && resource.data.studentId == request.auth.uid) ||
+        ((isLecturer() || isProgramAdmin() || isInstitutionalAdmin()) &&
+         (!('institutionId' in resource.data) || isSameInstitution(resource.data.institutionId)));
+      allow create, update: if (isStudent() && request.resource.data.studentId == request.auth.uid) ||
+        isLecturer() || isProgramAdmin() || isInstitutionalAdmin();
+      allow delete: if false;
+    }
+
+    // 16. Default Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

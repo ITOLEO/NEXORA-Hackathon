@@ -1,0 +1,1113 @@
+# NEXORA — PRD 07: RECOMMENDATION INTELLIGENCE ENGINE
+
+## 1. ROLE
+
+Act as a senior AI product architect, recommendation systems engineer, knowledge graph specialist, machine learning engineer, and educational technology developer.
+
+You are extending an existing NEXORA application built using Google AI Studio Build Mode.
+
+Your task is to build an intelligent, explainable, evidence-based recommendation engine connecting student profiles, competencies, learning pathways, and industry opportunities.
+
+You must inspect and reuse the existing application architecture from PRD 01–06.
+
+Do not create a new application.
+
+Do not replace existing authentication, database, design system, or portal functionality.
+
+---
+
+## 2. PRODUCT CONTEXT
+
+Product: NEXORA.
+
+Tagline: Grow beyond what you know.
+
+Category: Institutional Learning Intelligence Platform.
+
+Business model: B2B2C SaaS.
+
+Primary users:
+- Students.
+- Lecturers.
+- Academic administrators.
+- Authorized opportunity reviewers.
+- Industry partners.
+
+NEXORA contains three integrated portals:
+
+1. Student Portal.
+2. Lecturer Portal.
+3. Industry Portal.
+
+Shared foundations:
+- Firebase Authentication.
+- Cloud Firestore.
+- Course Knowledge Graph.
+- Competency Framework.
+- Granular Learner Profile.
+- Learning Evidence.
+- Opportunity Database.
+- Role-Based Access Control.
+
+The recommendation engine must use these existing components.
+
+All user-facing interface text MUST be in English.
+
+---
+
+## 3. PRIMARY OBJECTIVE
+
+Build a Hybrid Recommendation Intelligence Engine.
+
+The system must understand the relationship between:
+
+- Student goals.
+- Student interests.
+- Academic program.
+- Existing competencies.
+- Micro-skill mastery.
+- Prerequisite skills.
+- Assessment evidence.
+- Learning resources.
+- Learning activities.
+- Industry requirements.
+- Campus opportunities.
+
+The engine must generate relevant and explainable recommendations.
+
+It must help answer:
+
+1. What should this student learn next?
+2. Which competency gap should receive priority?
+3. Which prerequisite must be developed first?
+4. Which learning resource is most relevant?
+5. Which project or activity can strengthen a specific skill?
+6. Which scholarship or competition matches the student's goals?
+7. Does the student meet mandatory eligibility requirements?
+8. What additional competencies would improve the student's readiness?
+9. What is the most useful next action?
+10. Why is the recommendation being shown?
+
+The system must not merely rank content using keyword similarity.
+
+It must use structured competency relationships, evidence, eligibility rules, and student context.
+
+---
+
+## 4. RECOMMENDATION ARCHITECTURE
+
+Implement three layers.
+
+### LAYER A — Knowledge and Rules Engine
+
+Responsible for:
+- Prerequisite checking.
+- Competency traversal.
+- Mandatory eligibility validation.
+- Skill-gap analysis.
+- Course relationship lookup.
+- Opportunity requirement lookup.
+
+These operations must be deterministic and testable.
+
+### LAYER B — Recommendation Ranking Engine
+
+Responsible for:
+- Learning resource ranking.
+- Competency priority ranking.
+- Learning pathway sequencing.
+- Opportunity relevance ranking.
+- Recommendation diversity.
+
+Use explicit scoring features.
+
+Every score must be reproducible from stored input data and configuration.
+
+### LAYER C — AI-Assisted Explanation
+
+Responsible for:
+- Explaining recommendation relevance.
+- Summarizing skill gaps.
+- Generating understandable learning guidance.
+- Explaining possible preparation steps.
+- Providing natural-language descriptions.
+
+AI must only use verified structured recommendation data as grounding.
+
+AI must not invent student scores, opportunity requirements, deadlines, or academic rules.
+
+If the AI service is unavailable, the rule-based engine must still work.
+
+---
+
+## 5. LEARNER CONTEXT MODEL
+
+Use the existing Learner Profile.
+
+Create a recommendation context assembled from:
+
+### A. Academic Context
+
+- Institution.
+- Faculty.
+- Program.
+- Semester.
+- Enrolled courses.
+- Academic learning outcomes.
+- Assigned learning activities.
+
+### B. Personal Goals
+
+Examples:
+- Become a financial analyst.
+- Build an AI startup.
+- Develop product management skills.
+- Participate in business competitions.
+- Prepare for an internship.
+- Strengthen leadership capability.
+
+Allow students to create, edit, prioritize, pause, and remove personal goals.
+
+### C. Interest Profile
+
+Examples:
+- Business.
+- Technology.
+- Data.
+- Finance.
+- Entrepreneurship.
+- Marketing.
+- Design.
+- Social impact.
+- Research.
+- Leadership.
+
+Interests are preference signals, not proof of competence.
+
+### D. Competency Profile
+
+Use the canonical competency IDs from the existing Knowledge Graph.
+
+Each competency record must preserve:
+
+- Competency ID.
+- Micro-skill ID.
+- Mastery status.
+- Assessment evidence.
+- Evidence source.
+- Assessment date.
+- Evaluator where relevant.
+- Validation status.
+- Confidence or evidence quality.
+
+### E. Learning History
+
+Track:
+- Opened resources.
+- Completed activities.
+- Assessment attempts.
+- Evidence submissions.
+- Lecturer feedback.
+- Previously recommended items.
+- Student feedback on recommendations.
+
+Interaction data may influence relevance, but activity alone must not establish skill mastery.
+
+---
+
+## 6. SKILL GAP ANALYSIS ENGINE
+
+This is the central intelligence capability.
+
+### INPUT
+
+- Student goal.
+- Goal-related competency requirements.
+- Current student competency records.
+- Knowledge graph relationships.
+- Prerequisite relationships.
+- Assessment evidence.
+
+### PROCESS
+
+Step 1: Identify the competency requirements associated with the student goal.
+
+Step 2: Retrieve relevant skills and micro-skills from the Knowledge Graph.
+
+Step 3: Traverse prerequisite relationships.
+
+Step 4: Compare target skills with verified learner evidence.
+
+Step 5: Identify:
+- Demonstrated competencies.
+- Developing competencies.
+- Missing competencies.
+- Not-assessed competencies.
+- Missing prerequisites.
+- Outdated or insufficient evidence.
+
+Step 6: Rank development priorities.
+
+### OUTPUT
+
+Generate a Skill Gap Report containing:
+
+- Target competency.
+- Related micro-skills.
+- Current evidenced status.
+- Required status.
+- Missing prerequisites.
+- Available learning resources.
+- Suggested assessment.
+- Suggested next action.
+
+Use explicit status definitions.
+
+Do not assume a numeric score is universally comparable across different competencies.
+
+Use competency-specific proficiency rubrics.
+
+If evidence is missing, use "Not assessed" rather than assigning zero.
+
+### Skill gap priority
+
+Develop a configurable priority score using:
+
+- Relevance to the student's goal.
+- Importance within the competency framework.
+- Prerequisite dependency.
+- Evidence confidence.
+- Opportunity requirements.
+- Student-selected priority.
+
+Store the feature contributions and calculation version.
+
+Do not automatically treat the lowest skill score as the highest priority.
+
+A prerequisite may need to be developed before an advanced skill, even if the student has not yet been tested on it.
+
+---
+
+## 7. PERSONALIZED LEARNING RECOMMENDATION
+
+Build two distinct learning pathways.
+
+### A. Academic Learning Path
+
+This path is connected to formal education.
+
+It must reflect:
+- Approved curriculum.
+- CPL.
+- CPMK.
+- Enrolled courses.
+- Lecturer-assigned learning activities.
+- Official assessment requirements.
+
+The engine may recommend:
+- Additional resources.
+- Practice exercises.
+- Prerequisite reinforcement.
+- Learning activities.
+- Remedial support.
+- Advanced enrichment.
+
+It must not independently change:
+- Required courses.
+- Academic credits.
+- Official grades.
+- Formal curriculum requirements.
+- Graduation eligibility.
+
+### B. Personal Growth Path
+
+This path is based on individual student goals.
+
+It can recommend:
+- Additional competencies.
+- Independent learning modules.
+- External courses.
+- Projects.
+- Portfolio development.
+- Competitions.
+- Certifications.
+- Mentoring activities.
+
+Personal Growth Path must remain distinguishable from formal academic obligations.
+
+Students must be able to change their goals without changing their official academic program.
+
+### Learning pathway structure
+
+Each pathway item must contain:
+
+- Item ID.
+- Skill ID.
+- Learning objective.
+- Prerequisites.
+- Recommended resource.
+- Activity type.
+- Estimated duration where known.
+- Completion criteria.
+- Assessment criteria.
+- Priority.
+- Recommendation explanation.
+- Status.
+
+Allowed statuses:
+- Recommended.
+- Accepted.
+- In Progress.
+- Submitted.
+- Pending Review.
+- Completed.
+- Skipped.
+- Needs Reassessment.
+
+### Learning sequence
+
+Order activities using dependency relationships.
+
+Example:
+
+Goal: Become a Financial Data Analyst.
+
+Potential development sequence:
+1. Financial Statement Fundamentals.
+2. Basic Statistics.
+3. Spreadsheet Data Analysis.
+4. SQL Fundamentals.
+5. Financial Modeling.
+6. Business Intelligence.
+7. Financial Analytics Project.
+
+This is an illustrative sequence, not a universal mandatory curriculum.
+
+The engine must calculate prerequisite order from the approved Knowledge Graph instead of hardcoding career paths.
+
+---
+
+## 8. OPPORTUNITY MATCHING ENGINE
+
+Connect students to verified opportunities.
+
+Opportunity categories:
+- Scholarships.
+- Competitions.
+- Internships.
+- Industry Projects.
+- Mentoring Programs.
+- Training Programs.
+- Innovation Challenges.
+- Campus Programs.
+
+### A. Eligibility Filter
+
+Check mandatory criteria:
+
+- Academic status.
+- Program restrictions.
+- Study level.
+- Semester restrictions.
+- Geographic eligibility.
+- Other mandatory requirements.
+- Application deadline.
+- Opportunity publication status.
+
+Output:
+
+- Eligible.
+- Potentially Eligible.
+- Not Eligible.
+- Eligibility Unknown.
+
+A mandatory requirement must have a verifiable source.
+
+If the information is missing, mark it unknown.
+
+Do not interpret unknown information as automatic eligibility or disqualification.
+
+### B. Skill Readiness Analysis
+
+Compare required competencies with learner evidence.
+
+Show:
+- Required skill.
+- Current evidence status.
+- Skill gap.
+- Related learning resources.
+- Preparation recommendation.
+
+Readiness is informational.
+
+Missing optional or developable skills must not automatically disqualify students.
+
+### C. Relevance Ranking
+
+Implement a configurable baseline scoring model.
+
+Initial DECISION:
+
+Opportunity Relevance Score:
+
+- Goal alignment: 30%.
+- Student interest alignment: 25%.
+- Competency relevance: 25%.
+- Opportunity timing and availability: 20%.
+
+Formula:
+
+Relevance Score =
+(Goal Alignment × 0.30)
++ (Interest Alignment × 0.25)
++ (Competency Relevance × 0.25)
++ (Timing Relevance × 0.20)
+
+Normalize factor values to a documented 0–100 scale.
+
+Treat unknown values explicitly.
+
+Never silently assign full points to missing information.
+
+Keep eligibility separate from relevance ranking.
+
+Keep skill readiness separate from relevance ranking.
+
+Store:
+- Individual feature scores.
+- Weights.
+- Final score.
+- Ranking configuration version.
+- Recommendation date.
+
+These weights are initial configurable defaults, not validated universal truths.
+
+### D. Opportunity Explanation
+
+Example:
+
+"Recommended because this competition aligns with your entrepreneurship goal and interests in innovation. Your business modeling skills provide a relevant foundation. Consider strengthening customer validation before applying."
+
+Every explanation must be grounded in actual student profile data and verified opportunity requirements.
+
+Do not claim that the student satisfies mandatory eligibility without evidence.
+
+---
+
+## 9. NEXT BEST ACTION ENGINE
+
+This engine recommends a useful next step rather than simply displaying a long list.
+
+Possible action categories:
+
+LEARN:
+- Read a resource.
+- Complete an exercise.
+- Practice a micro-skill.
+- Review a prerequisite.
+- Take an assessment.
+
+BUILD:
+- Create a portfolio project.
+- Complete a practical challenge.
+- Submit learning evidence.
+
+CONNECT:
+- Explore relevant mentoring.
+- Join an approved learning group.
+- Discover a relevant community.
+
+EXPLORE:
+- Review an opportunity.
+- Check eligibility.
+- Save a competition.
+- Prepare an application.
+
+Examples:
+
+"Complete Financial Modeling Fundamentals before starting the advanced finance project."
+
+"Your interest in entrepreneurship matches this innovation competition. Review its eligibility requirements."
+
+"Your lecturer requested additional evidence for Data Visualization. Complete the assigned chart interpretation exercise."
+
+### Next action ranking
+
+Prioritize:
+1. Mandatory academic activities and relevant deadlines.
+2. Unmet prerequisites.
+3. High-priority student goals.
+4. High-relevance opportunities.
+5. Recommended exploration activities.
+
+Respect academic deadlines and lecturer-assigned requirements.
+
+Allow students to dismiss, postpone, or mark personal recommendations as not relevant.
+
+Do not let automated ranking silently override official academic obligations.
+
+---
+
+## 10. RECOMMENDATION DIVERSITY AND STUDENT AUTONOMY
+
+Avoid recommending only content similar to what the student has already consumed.
+
+Support:
+- New competency discovery.
+- Cross-disciplinary recommendations.
+- Alternative learning resources.
+- Exploration outside stated interests.
+- Student-selected goals.
+- Student feedback.
+
+Provide an exploration section with diverse recommendations.
+
+Students must be able to:
+- Accept.
+- Save.
+- Dismiss.
+- Postpone.
+- Mark as Not Relevant.
+- Change personal goals.
+- Request additional explanation.
+
+Do not treat a dismissed recommendation as evidence of low ability.
+
+Do not create permanent labels such as:
+- Low potential.
+- Weak student.
+- Poor learner.
+- Unsuitable career.
+
+Recommendations must remain supportive and editable.
+
+---
+
+## 11. RECOMMENDATION EXPLANATIONS
+
+Every recommendation must provide a clear explanation.
+
+Required explanation structure:
+
+1. Why am I seeing this?
+2. Which goal or interest is related?
+3. Which competencies are involved?
+4. What evidence supports the recommendation?
+5. What skill gap exists?
+6. What can I do next?
+7. What information remains unknown?
+
+Example:
+
+WHY THIS IS RECOMMENDED:
+
+"This learning resource supports your goal of becoming a Financial Data Analyst. Your current learner profile contains evidence of spreadsheet analysis but does not yet contain validated SQL competency evidence."
+
+NEXT ACTION:
+
+"Complete the SQL Fundamentals learning activity and submit the practical exercise for review."
+
+Use structured recommendation data as the source.
+
+AI may improve language clarity but must not alter factual scoring or eligibility results.
+
+---
+
+## 12. RECOMMENDATION DATA ARCHITECTURE
+
+Inspect existing Firestore collections before adding new data.
+
+Reuse existing:
+- learner_profiles.
+- learner_goals.
+- student_skills.
+- kg_nodes.
+- kg_edges.
+- learning_resources.
+- learning_activities.
+- learning_paths.
+- opportunities.
+- opportunity_skills.
+- opportunity_eligibility.
+- assessment_attempts.
+- skill_evidence.
+- evidence_reviews.
+- student_actions.
+
+Extend with:
+
+### recommendation_runs
+
+Fields:
+- recommendationRunId.
+- studentId.
+- institutionId.
+- recommendationContextVersion.
+- algorithmVersion.
+- generatedAt.
+- status.
+- inputReferences.
+
+### recommendations
+
+Fields:
+- recommendationId.
+- recommendationRunId.
+- studentId.
+- recommendationType.
+- targetEntityType.
+- targetEntityId.
+- relevanceScore where applicable.
+- eligibilityStatus where applicable.
+- readinessSummary.
+- featureContributions.
+- explanation.
+- priority.
+- status.
+- createdAt.
+- expiresAt where applicable.
+
+### recommendation_feedback
+
+Fields:
+- feedbackId.
+- studentId.
+- recommendationId.
+- feedbackType.
+- feedbackReason.
+- createdAt.
+
+### recommendation_configurations
+
+Fields:
+- configurationId.
+- institutionId.
+- recommendationType.
+- featureWeights.
+- thresholds.
+- effectiveDate.
+- configurationVersion.
+- status.
+- approvedBy.
+
+### recommendation_events
+
+Fields:
+- eventId.
+- studentId.
+- recommendationId.
+- eventType.
+- timestamp.
+- relatedEntityId.
+
+### skill_gap_reports
+
+Fields:
+- reportId.
+- studentId.
+- goalId.
+- targetCompetencies.
+- identifiedGaps.
+- prerequisiteGaps.
+- evidenceReferences.
+- calculatedAt.
+- algorithmVersion.
+
+Maintain institution scoping and authorization.
+
+Never duplicate canonical skill IDs.
+
+---
+
+## 13. RECOMMENDATION ENGINE SERVICE ARCHITECTURE
+
+Create reusable server-side services.
+
+Suggested modules:
+
+1. LearnerContextService.
+2. KnowledgeGraphTraversalService.
+3. EligibilityService.
+4. SkillGapAnalysisService.
+5. LearningResourceRecommendationService.
+6. LearningPathSequencingService.
+7. OpportunityMatchingService.
+8. NextBestActionService.
+9. RecommendationExplanationService.
+10. RecommendationFeedbackService.
+
+All recommendation calculations must be server-side.
+
+Do not expose private student records to public client queries.
+
+Use bounded graph traversal and efficient database queries.
+
+Cache reusable public competency and learning resource information where appropriate.
+
+Recalculate recommendations when important input events occur:
+- Goal changes.
+- Assessment validation.
+- New evidence approval.
+- Course mapping changes.
+- Opportunity publication.
+- Opportunity expiration.
+- Relevant student feedback.
+
+Do not run expensive AI inference for every page render.
+
+Use controlled generation and caching.
+
+---
+
+## 14. STUDENT PORTAL UI
+
+Extend the existing Student Portal.
+
+Create or update the following sections:
+
+### A. Personalized Overview
+
+Display:
+- Current goals.
+- Top skill gaps.
+- Recommended next actions.
+- Active learning pathways.
+- Relevant opportunities.
+- Upcoming deadlines.
+- Recent competency progress.
+
+### B. My Skill Intelligence
+
+Display:
+- Competency clusters.
+- Micro-skill status.
+- Evidence history.
+- Mastery estimates.
+- Missing prerequisites.
+- Development priorities.
+
+Allow students to select a skill and inspect its relationship to courses, concepts, learning resources, and goals.
+
+### C. My Learning Path
+
+Display:
+- Academic Learning Path.
+- Personal Growth Path.
+- Ordered skill development steps.
+- Learning resources.
+- Activity status.
+- Evidence requirements.
+
+### D. Opportunity Discovery
+
+Display:
+- Recommended opportunities.
+- Eligibility status.
+- Relevance explanation.
+- Required skills.
+- Skill readiness.
+- Deadline.
+- Official source.
+- Save and application actions.
+
+### E. Recommendation Feedback
+
+Students can:
+- Accept.
+- Dismiss.
+- Postpone.
+- Save.
+- Mark as irrelevant.
+- Request explanation.
+
+Every interaction must persist.
+
+---
+
+## 15. LECTURER PORTAL UI
+
+Extend the existing Lecturer Portal.
+
+Add Recommendation Insights:
+
+Display:
+- Class competency gaps.
+- Skills with insufficient assessment evidence.
+- Suggested additional practice.
+- Students requiring learning support.
+- Recommended enrichment activities.
+- Learning pathway progress.
+
+Allow lecturers to:
+- Review suggested activities.
+- Assign resources to classes.
+- Assign resources to individual students.
+- Adjust flexible learning groups.
+- Review skill-gap reports.
+- Validate assessment evidence.
+- Override an incorrect learning recommendation with a documented reason.
+
+Lecturer interventions must be explainable and traceable.
+
+Do not expose students outside assigned courses.
+
+---
+
+## 16. INDUSTRY PORTAL UI
+
+Extend the existing Industry Portal.
+
+Opportunity managers can view:
+
+- Opportunity relevance summaries.
+- Required competencies.
+- Competency taxonomy coverage.
+- Aggregate interest and engagement.
+- Aggregate readiness insights where authorized.
+
+Industry users must not access:
+- Private student skill scores.
+- Full learner profiles.
+- Personal learning histories.
+- Private academic assessment records.
+
+If a student chooses to express interest and consents to sharing information, expose only the approved fields.
+
+Do not create unrestricted student ranking or automated hiring recommendations.
+
+---
+
+## 17. AI INTEGRATION RULES
+
+AI is optional support, not the authoritative decision engine.
+
+Use AI for:
+- Natural-language explanations.
+- Learning resource summaries.
+- Goal clarification.
+- Parsing unstructured opportunity descriptions into draft structured fields.
+- Suggesting skill taxonomy candidates.
+- Draft learning activity descriptions.
+
+All extracted or generated information must be validated.
+
+For unstructured industry descriptions:
+1. Parse the text.
+2. Identify possible competency matches.
+3. Return candidate canonical skill IDs.
+4. Flag confidence and missing details.
+5. Require authorized review before creating official mappings.
+
+AI must not:
+- Determine official university grades.
+- Declare mastery without valid evidence.
+- Invent eligibility criteria.
+- Invent opportunity deadlines.
+- Change official course requirements.
+- Make irreversible student decisions.
+- Infer personality, intelligence, or potential from browsing behavior.
+
+Use structured output schemas for AI services.
+
+If AI is unavailable, fallback to deterministic rule-based recommendations.
+
+---
+
+## 18. FAIRNESS, PRIVACY, AND EXPLAINABILITY
+
+Protect students from opaque or unfair recommendations.
+
+Implement:
+
+- Explainable ranking.
+- Student feedback.
+- Goal changes.
+- Alternative recommendations.
+- Recommendation history.
+- Data provenance.
+- Configurable ranking rules.
+- Institution-level oversight.
+
+Evaluate recommendation performance across relevant student groups only where collection and analysis are lawful and necessary.
+
+Do not infer sensitive personal attributes.
+
+Do not use socioeconomic status, health, religion, ethnicity, or other sensitive attributes to rank student potential.
+
+Do not make high-stakes academic or employment decisions through automated recommendations.
+
+Allow human review and correction.
+
+Use the existing role-based access system from PRD 06.
+
+---
+
+## 19. RECOMMENDATION PERFORMANCE ANALYTICS
+
+Track:
+
+### Recommendation Quality
+- Recommendation relevance feedback.
+- Click-through rate.
+- Save rate.
+- Acceptance rate.
+- Dismissal rate.
+
+### Learning Outcomes
+- Learning activity completion.
+- Skill assessment improvement.
+- Evidence submission.
+- Evidence approval.
+- Time between recommendation and action.
+
+### Opportunity Outcomes
+- Eligibility information completeness.
+- Opportunity detail views.
+- Saves.
+- Expressed interest.
+- External application link clicks.
+- Confirmed participation where verified.
+
+### System Performance
+- Recommendation calculation time.
+- Failed jobs.
+- Duplicate recommendations.
+- Stale opportunity recommendations.
+- Missing graph relationships.
+
+Do not confuse engagement metrics with actual learning improvement.
+
+Track learning improvement using comparable assessments and valid evidence.
+
+---
+
+## 20. TESTING AND ACCEPTANCE CRITERIA
+
+PASS only when:
+
+1. A student goal can be connected to relevant competency nodes.
+2. The engine can traverse micro-skill prerequisites.
+3. The system can identify missing skill evidence.
+4. The system distinguishes Not Assessed from low mastery.
+5. Skill-gap reports are generated from actual learner records.
+6. Learning resources are recommended from verified graph relationships.
+7. Academic and Personal Growth Paths remain separate.
+8. Learning activities can be ordered by prerequisite dependencies.
+9. Opportunity mandatory eligibility is checked separately from skill readiness.
+10. Opportunity relevance scores are reproducible.
+11. Ranking weights are stored and versioned.
+12. Recommendation explanations use grounded data.
+13. Students can accept, dismiss, postpone, and provide feedback.
+14. Lecturer recommendations are restricted to authorized classes.
+15. Industry users only see permitted aggregate information.
+16. Private student records remain protected.
+17. Changes to student goals trigger appropriate recommendation updates.
+18. New validated evidence updates relevant skill-gap calculations.
+19. Expired opportunities are excluded from active recommendations.
+20. Recommendations do not silently duplicate.
+21. The engine functions without AI when using deterministic fallbacks.
+22. Existing Student, Lecturer, and Industry workflows remain functional.
+
+Create unit tests for:
+- Eligibility calculation.
+- Skill gap analysis.
+- Prerequisite traversal.
+- Ranking reproducibility.
+- Missing evidence.
+- Unknown eligibility.
+- Expired opportunities.
+- Recommendation feedback.
+- Permission boundaries.
+- Goal changes.
+- Assessment updates.
+
+Use synthetic DEMO profiles and opportunities for testing.
+
+---
+
+## 21. IMPLEMENTATION PROCESS
+
+STEP 1 — AUDIT
+
+Inspect:
+- Existing learner profiles.
+- Knowledge Graph.
+- Competency records.
+- Evidence records.
+- Opportunities.
+- Learning resources.
+- Existing workflow events.
+- Security rules.
+
+Do not assume proposed PRD 01–06 functionality has been implemented correctly.
+
+Verify it first.
+
+STEP 2 — RULE ENGINE
+
+Implement deterministic eligibility, prerequisite traversal, and skill-gap calculation.
+
+STEP 3 — RANKING ENGINE
+
+Implement configurable relevance ranking and learning pathway prioritization.
+
+STEP 4 — EXPLANATION ENGINE
+
+Implement structured explanations and optional AI-assisted wording.
+
+STEP 5 — PORTAL INTEGRATION
+
+Extend Student, Lecturer, and Industry dashboards.
+
+STEP 6 — EVENT UPDATES
+
+Connect recommendation recalculation to approved data changes.
+
+STEP 7 — EVALUATION
+
+Test ranking, accuracy of eligibility, user feedback, and recommendation usefulness.
+
+---
+
+## 22. OUTPUT FORMAT
+
+Before making code changes, return:
+
+1. Existing recommendation-related architecture audit.
+2. Existing data sources.
+3. Missing graph relationships.
+4. Recommendation feature specification.
+5. Scoring formula and configuration.
+6. Security and privacy assessment.
+7. Implementation plan.
+
+Then implement incrementally.
+
+Deliver:
+- Recommendation engine services.
+- Skill Gap Analysis.
+- Personalized Learning Path.
+- Opportunity Matching.
+- Next Best Action.
+- Recommendation explanations.
+- Student dashboard updates.
+- Lecturer dashboard updates.
+- Industry dashboard updates.
+- Database extensions.
+- Unit and integration tests.
+- Performance report.
+- PASS/FAIL acceptance checklist.
+- Remaining TODO items.
+
+For every PASS, provide actual test evidence.
+
+For every FAIL, identify the affected service and required fix.
+
+CRITICAL RULE:
+
+NEXORA MUST RECOMMEND ACTIONS BASED ON STRUCTURED KNOWLEDGE, VERIFIED EVIDENCE, EXPLICIT ELIGIBILITY, AND STUDENT CONTEXT.
+
+AI MUST NOT INVENT COMPETENCIES, ASSESSMENT RESULTS, STUDENT MASTERY, OR OPPORTUNITY REQUIREMENTS.
+
+The Student, Lecturer, and Industry portals must use one shared recommendation architecture with controlled and explainable outputs.
+</output_format>

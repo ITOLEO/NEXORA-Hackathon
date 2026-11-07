@@ -1,0 +1,1323 @@
+# NEXORA — PRD 08: UI/UX REFINEMENT & DESIGN SYSTEM CONSISTENCY
+
+## 1. ROLE
+
+Act as a senior SaaS product designer, UI/UX architect, design system engineer, accessibility specialist, and frontend developer.
+
+You are improving an existing NEXORA application built using Google AI Studio Build Mode.
+
+Your responsibility is to audit and refine the visual experience, navigation, responsive layouts, component consistency, and interactions across all three portals.
+
+You must preserve the existing application architecture and functionality.
+
+Do not rebuild the platform from scratch.
+
+Do not remove working features.
+
+Do not create disconnected mockup pages.
+
+---
+
+## 2. PRODUCT CONTEXT
+
+Product Name: NEXORA.
+
+Tagline: Grow beyond what you know.
+
+Product Category: Institutional Learning Intelligence Platform.
+
+Business Model: B2B2C SaaS.
+
+Core Product:
+
+NEXORA connects institutional curricula, student competencies, personalized learning pathways, and real-world opportunities.
+
+Primary Portals:
+
+1. Student Portal.
+2. Lecturer Portal.
+3. Industry Portal.
+
+Shared Infrastructure:
+- One authentication system.
+- One shared database.
+- One design system.
+- One knowledge graph.
+- One recommendation architecture.
+- Role-based navigation.
+- Institution-level data permissions.
+
+The application must feel like ONE unified SaaS ecosystem.
+
+All visible UI text MUST remain in English.
+
+---
+
+## 3. REFERENCE MATERIALS AND CONFIDENCE LABELS
+
+Use the following sources in order of authority.
+
+SOURCE 1 — APPROVED BRAND GUIDELINE
+
+The NEXORA Brand Guidelines v1.0 define the authoritative brand identity and design tokens.
+
+SOURCE 2 — EXISTING APPLICATION
+
+The current application code, implemented functionality, routes, and data structures are the source of truth for actual product behavior.
+
+SOURCE 3 — NEXORA VISUAL CONCEPT REFERENCE
+
+Use the attached NEXORA multi-portal dashboard visualization as visual inspiration for:
+- Layout composition.
+- Visual hierarchy.
+- Dashboard presentation.
+- Card arrangements.
+- Navigation structure.
+- Multi-portal consistency.
+
+The generated visual is a conceptual reference, not an exact specification.
+
+Do not reproduce distorted text, invented statistics, placeholder content, or inaccurate data from the reference image.
+
+Use the actual NEXORA application data and approved product requirements.
+
+CONFIDENCE LABELS:
+
+FACT:
+Information explicitly established by the approved brand guideline or existing application.
+
+ESTIMATE:
+Values estimated visually from an image reference.
+
+DECISION:
+Design choices defined in this PRD when the existing implementation is silent.
+
+UNKNOWN:
+Information not present in the application or references.
+
+Never invent UNKNOWN information.
+
+Use existing approved content where available. Otherwise use clearly labeled DEMO content or TODO.
+
+---
+
+## 4. OFFICIAL NEXORA BRAND IDENTITY
+
+BRAND POSITIONING:
+
+Institutional Learning Intelligence.
+
+BRAND ESSENCE:
+
+Intelligent Human Growth.
+
+BRAND PERSONALITY:
+
+- Intelligent.
+- Professional.
+- Human-centered.
+- Progressive.
+- Trustworthy.
+
+VISUAL DIRECTION:
+
+Human Growth with professional enterprise SaaS characteristics.
+
+LOGO CONCEPT:
+
+Hybrid Connected Nodes + Growth Path.
+
+The NEXORA symbol represents:
+- Connected knowledge.
+- Competency development.
+- Learning journeys.
+- Opportunities.
+- Individual progress.
+
+Use the existing logo asset if implemented.
+
+If no final logo asset exists, reuse the approved conceptual geometric N-inspired mark. Do not invent an unrelated replacement.
+
+PRIMARY TAGLINE:
+
+"Grow beyond what you know."
+
+---
+
+## 5. DESIGN TOKENS — STRICTLY PRESERVE
+
+IMPORTANT:
+
+The following tokens are approved and must not be changed.
+
+### Primary Colors
+
+- Evergreen: #173A32
+- Growth Green: #25866A
+- Warm Amber: #D7A85B
+
+### Neutral Colors
+
+- Warm Ivory: #F4F2EA
+- Stone: #E9E5DA
+- White: #FFFFFF
+- Primary Text: #173A32
+- Muted Text: #66736C
+- Border: #DCE4DD
+
+### Functional Colors
+
+- Success: #237A55
+- Warning: #A76716
+- Error: #B54747
+- Information: #416B8B
+
+### Typography
+
+Heading Font:
+Manrope.
+
+Interface Font:
+Inter.
+
+Typography scale:
+
+- Display: 40px / 48px, 700.
+- H1: 32px / 40px, 700.
+- H2: 24px / 32px, 650.
+- H3: 20px / 28px, 600.
+- H4: 18px / 26px, 600.
+- Body: 14px / 22px, 400.
+- Body Small: 13px / 20px, 400.
+- Caption: 12px / 16px, 500.
+- Button: 14px / 20px, 600.
+
+### Spacing
+
+Use only the approved spacing scale:
+
+4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px, 80px.
+
+### Border Radius
+
+- Badge: 6px.
+- Input: 8px.
+- Button: 8px.
+- Standard Card: 12px.
+- Modal: 16px.
+- Feature Panel: 20px.
+- Avatar: 999px.
+
+### Layout
+
+- Desktop sidebar: 248px.
+- Collapsed sidebar: 72px.
+- Topbar: 64px.
+- Maximum content width: 1440px.
+- Default page padding: 24–32px.
+- Desktop grid: 12 columns.
+
+### Iconography
+
+Use Lucide outline icons.
+
+- Standard navigation: 20px.
+- Inline icon: 16px.
+- Feature icon: 24px.
+- Consistent 1.75px stroke.
+
+Do not mix unrelated icon styles.
+
+---
+
+## 6. GLOBAL DESIGN PRINCIPLES
+
+Use the following visual principles:
+
+1. Clean enterprise SaaS interfaces.
+2. Warm neutral backgrounds.
+3. Clear information hierarchy.
+4. Evergreen navigation and primary actions.
+5. Restrained amber accents.
+6. Thin and subtle borders.
+7. Consistent whitespace.
+8. Meaningful data visualizations.
+9. Minimal decorative elements.
+10. Human-centered interface copy.
+
+Avoid:
+
+- Neon gradients.
+- Purple AI-themed gradients.
+- Excessive glassmorphism.
+- Excessive animations.
+- Unnecessary 3D objects.
+- Decorative cards without functional purpose.
+- Excessive rounded components.
+- Random dashboard colors.
+- Overloaded information density.
+- Fake metrics presented as real data.
+
+Use color to communicate meaning, not decoration.
+
+Amber must not be used as small text on white backgrounds without sufficient contrast.
+
+---
+
+## 7. DESIGN AUDIT BEFORE IMPLEMENTATION
+
+Before modifying the application, inspect the entire existing project.
+
+Inventory the following:
+
+### Shared Application
+
+- Login page.
+- Registration or access request.
+- Forgot password.
+- Workspace selector.
+- Main application shell.
+- Sidebar.
+- Topbar.
+- Notifications.
+- User menu.
+- Responsive navigation.
+
+### Student Portal
+
+- Overview.
+- My Profile.
+- My Skills.
+- Skill Detail.
+- My Learning.
+- Learning Path.
+- Opportunity Discovery.
+- Opportunity Detail.
+- Saved Opportunities.
+- My Portfolio.
+- My Goals.
+- Notifications.
+- Settings.
+
+### Lecturer Portal
+
+- Overview.
+- My Courses.
+- Course Workspace.
+- Course Knowledge Graph.
+- Competency Editor.
+- Class Intelligence.
+- Student Progress.
+- Learning Activities.
+- Assessment Center.
+- Evidence Review.
+- Feedback.
+- Settings.
+
+### Industry Portal
+
+- Overview.
+- Organization Profile.
+- Opportunities.
+- Create Opportunity.
+- Edit Opportunity.
+- Opportunity Detail.
+- Skill Requirements.
+- Approval Status.
+- Student Engagement.
+- Collaboration Projects.
+- Analytics.
+- Settings.
+
+### Administrative Functions
+
+Inspect existing institutional and technical administration interfaces.
+
+Do not create new administrative portals unless an existing implementation requires a correction.
+
+For every page, record:
+
+- Existing layout.
+- Visible elements.
+- Typography.
+- Color usage.
+- Spacing.
+- Components.
+- Interactive elements.
+- Navigation behavior.
+- Responsive behavior.
+- Empty states.
+- Loading states.
+- Error states.
+
+Deliver a short DESIGN AUDIT containing:
+
+1. Existing pages.
+2. Existing reusable components.
+3. Design inconsistencies.
+4. Broken interactions.
+5. Responsive issues.
+6. Accessibility issues.
+7. Components requiring improvement.
+8. UNKNOWN items.
+
+Do not delete or rewrite existing functionality during the audit.
+
+After identifying issues, implement the refinements below.
+
+---
+
+## 8. SHARED APPLICATION SHELL
+
+Create one consistent application shell across all portals.
+
+### Desktop Layout
+
+LEFT SIDEBAR:
+
+Width: 248px.
+
+Contents:
+- NEXORA logo.
+- Portal identity.
+- Navigation groups.
+- Active navigation indicator.
+- Settings.
+- Collapse control.
+
+TOPBAR:
+
+Height: 64px.
+
+Contents:
+- Breadcrumb.
+- Page title context where appropriate.
+- Global search where applicable.
+- Notifications.
+- User avatar.
+- Account menu.
+- Workspace switcher for authorized multi-role users.
+
+CONTENT AREA:
+
+- Responsive maximum width: 1440px.
+- Consistent page padding.
+- Clear page heading.
+- Supporting description.
+- Primary action placement.
+- Consistent section spacing.
+
+### Sidebar States
+
+- Expanded.
+- Collapsed.
+- Mobile drawer.
+- Active route.
+- Hover.
+- Focus-visible.
+- Disabled.
+
+On desktop, sidebar must collapse without breaking content alignment.
+
+On mobile, use a drawer or appropriate bottom navigation where suitable.
+
+Do not display menus that the current user is not authorized to access.
+
+---
+
+## 9. STUDENT PORTAL UI/UX
+
+PRIMARY EXPERIENCE:
+
+Help students understand their capabilities, identify learning needs, discover opportunities, and take meaningful development actions.
+
+### A. Student Overview
+
+Top section:
+- Personalized greeting.
+- Student profile identity.
+- Program and semester.
+- Current development goals.
+
+Summary section:
+- Learning progress.
+- Assessed competencies.
+- Active learning activities.
+- Upcoming deadlines.
+
+Skill section:
+- Competency clusters.
+- Micro-skill progress.
+- Priority skill gaps.
+- Evidence status.
+
+Recommendation section:
+- Recommended next action.
+- Recommended learning resources.
+- Relevant opportunities.
+- Explanation of recommendations.
+
+The interface must prioritize useful actions.
+
+Do not display large metrics merely to fill dashboard space.
+
+### B. My Skills
+
+Create an understandable competency exploration experience.
+
+Display:
+- Competency clusters.
+- Individual micro-skills.
+- Mastery state.
+- Evidence source.
+- Assessment date.
+- Prerequisite dependencies.
+
+Allow students to:
+- Select a competency.
+- Explore connected micro-skills.
+- View prerequisites.
+- View assessment evidence they are authorized to access.
+- Identify missing evidence.
+- Review development suggestions.
+
+Use an interactive skill map only when it adds clarity.
+
+Provide an accessible alternative list or table.
+
+### C. My Learning
+
+Display two separate sections:
+
+Academic Learning Path:
+- Formal course-related learning.
+- Lecturer-assigned activities.
+- Course learning outcomes.
+- Required assessments.
+
+Personal Growth Path:
+- Student-selected goals.
+- Additional skills.
+- Independent resources.
+- Portfolio projects.
+- Personal development activities.
+
+Do not mix formal academic obligations with optional personal development.
+
+### D. Opportunity Discovery
+
+Create an opportunity exploration interface.
+
+Support:
+- Search.
+- Category filtering.
+- Deadline filtering.
+- Eligibility filtering.
+- Relevance sorting.
+- Saved opportunities.
+- Opportunity details.
+
+Opportunity cards display:
+- Opportunity title.
+- Organization.
+- Category.
+- Deadline.
+- Eligibility status.
+- Relevant competency indicators.
+- Recommendation explanation.
+- Save action.
+
+Opportunity details display:
+- Description.
+- Requirements.
+- Application information.
+- Required skills.
+- Relevant student skills.
+- Skill gaps.
+- Recommended preparation.
+- Verified source link.
+
+### E. Portfolio
+
+Display:
+- Projects.
+- Certificates.
+- Learning evidence.
+- Lecturer-approved evidence.
+- Personal achievements.
+
+Make the distinction between self-submitted and institutionally validated evidence visible.
+
+### F. Student Interaction Standards
+
+Use clear action labels:
+
+- Start Learning.
+- View Skill Details.
+- Submit Evidence.
+- Review Recommendation.
+- Save Opportunity.
+- Check Eligibility.
+- Explore Learning Path.
+
+Avoid ambiguous labels such as "Go", "Continue Here", or "Click Me".
+
+---
+
+## 10. LECTURER PORTAL UI/UX
+
+PRIMARY EXPERIENCE:
+
+Help lecturers understand class competency distribution and take appropriate teaching actions.
+
+### A. Lecturer Overview
+
+Display:
+- Assigned courses.
+- Student enrollment.
+- Upcoming assessments.
+- Pending evidence reviews.
+- Competency coverage.
+- Class learning gaps.
+- Recent student activity.
+- Recommended teaching actions.
+
+### B. My Courses
+
+Use a clear course listing.
+
+Each course card or row shows:
+- Course name.
+- Course code.
+- Class section.
+- Semester.
+- Student count.
+- Learning outcome status.
+- Assessment status.
+
+### C. Course Workspace
+
+Organize course information through tabs or clearly separated sections:
+
+- Overview.
+- Learning Outcomes.
+- Competencies.
+- Micro-skills.
+- Knowledge Graph.
+- Resources.
+- Assessments.
+- Students.
+
+Maintain consistent hierarchy.
+
+### D. Knowledge Graph Explorer
+
+Improve the existing Course Knowledge Graph interface.
+
+Include:
+- Graph canvas.
+- Node selection.
+- Relationship visualization.
+- Search.
+- Type filters.
+- Prerequisite direction.
+- Detail panel.
+- Add and edit actions.
+- Validation warnings.
+
+Visually distinguish:
+
+- Course.
+- Learning Outcome.
+- Competency.
+- Micro-skill.
+- Concept.
+- Learning Resource.
+- Assessment.
+
+Provide an alternative structured table or list for users who find graph navigation difficult.
+
+### E. Class Intelligence
+
+Display:
+- Competency distribution.
+- Assessment coverage.
+- Missing evidence.
+- Learning gaps.
+- Class progress.
+- Student support needs.
+
+Visualizations must include:
+- Clear labels.
+- Legends.
+- Accessible color contrast.
+- Tooltips.
+- Contextual explanations.
+
+Do not rely on color alone.
+
+### F. Assessment and Evidence Review
+
+Use a structured review layout.
+
+Display:
+- Student identity.
+- Assigned task.
+- Submission date.
+- Submitted evidence.
+- Rubric.
+- Skill being assessed.
+- Previous relevant evidence where authorized.
+
+Actions:
+- Review.
+- Approve.
+- Request Revision.
+- Provide Feedback.
+
+Show confirmation before finalizing consequential assessment actions.
+
+Lecturers retain academic judgment.
+
+### G. Offline Classroom Support
+
+Create printable or exportable views for:
+- Learning activity instructions.
+- Flexible learning groups.
+- Classroom worksheets.
+- Assessment rubrics.
+
+These views must remain readable when printed.
+
+---
+
+## 11. INDUSTRY PORTAL UI/UX
+
+PRIMARY EXPERIENCE:
+
+Help external organizations publish opportunities, communicate skill requirements, and collaborate with universities.
+
+### A. Industry Overview
+
+Display:
+- Organization identity.
+- Verification status.
+- Active opportunities.
+- Draft opportunities.
+- Pending reviews.
+- Upcoming deadlines.
+- Engagement metrics.
+- Collaboration status.
+
+### B. Organization Profile
+
+Use a professional company profile layout.
+
+Display:
+- Organization name.
+- Logo.
+- Industry category.
+- Website.
+- Description.
+- Location.
+- Authorized representatives.
+- Verification state.
+
+### C. Opportunity Management
+
+Display opportunities in a table or card layout.
+
+Include:
+- Opportunity title.
+- Category.
+- Status.
+- Created date.
+- Deadline.
+- Approval state.
+- Engagement summary.
+
+Actions:
+- Create.
+- Edit.
+- Preview.
+- Submit for Review.
+- Archive.
+
+### D. Opportunity Creation
+
+Use a structured multi-section form.
+
+Sections:
+1. Basic Information.
+2. Opportunity Details.
+3. Eligibility Requirements.
+4. Skill Requirements.
+5. Timeline and Location.
+6. Application Information.
+7. Preview and Submission.
+
+Show:
+- Field labels.
+- Helper text.
+- Required indicators.
+- Validation errors.
+- Section progress.
+- Save Draft action.
+- Final Preview.
+
+Do not overload one long form.
+
+### E. Skill Requirement Mapping
+
+Display available institutional competencies.
+
+Allow authorized organizations to:
+- Search skills.
+- Select existing competencies.
+- Define mandatory skills.
+- Add recommended skills.
+- Suggest an unmapped skill for review.
+
+Never allow industry partners to modify official university competency definitions.
+
+### F. Approval Status
+
+Clearly show:
+- Draft.
+- Submitted for Review.
+- Needs Revision.
+- Approved.
+- Published.
+- Rejected.
+- Expired.
+- Archived.
+
+If revisions are requested, display the reviewer's feedback and required corrections.
+
+### G. Collaboration Projects
+
+Use a structured project workspace.
+
+Display:
+- Project scope.
+- Learning objectives.
+- Required competencies.
+- Timeline.
+- Milestones.
+- University partner.
+- Authorized student participation.
+- Project status.
+
+Do not expose private student learning profiles.
+
+---
+
+## 12. SHARED AUTHENTICATION UX
+
+Maintain one NEXORA login experience.
+
+Login page sections:
+
+- NEXORA logo.
+- Primary tagline.
+- Welcome message.
+- Email field.
+- Password field.
+- Password visibility.
+- Forgot Password.
+- Sign In button.
+- Google Sign-In where configured.
+- Institutional SSO where configured.
+- Access Request for unregistered users.
+
+Authentication flows:
+
+- Login.
+- Registration or invitation acceptance.
+- Email verification.
+- Password reset.
+- Workspace selector.
+- Sign out.
+- Access denied.
+
+Do not create three different login pages.
+
+After successful login, route users according to authorized roles.
+
+A user with multiple roles must be able to select an authorized workspace.
+
+Display authentication errors clearly without exposing sensitive account information.
+
+---
+
+## 13. COMPONENT SYSTEM REFINEMENT
+
+Audit and standardize reusable components.
+
+### Buttons
+
+Variants:
+- Primary.
+- Secondary.
+- Tertiary.
+- Destructive.
+- Text button.
+- Icon button.
+
+States:
+- Default.
+- Hover.
+- Active.
+- Focus-visible.
+- Disabled.
+- Loading.
+
+### Cards
+
+Variants:
+- Standard.
+- Interactive.
+- Summary.
+- Recommendation.
+- Opportunity.
+- Learning Activity.
+- Competency.
+
+Cards must have consistent padding, border, radius, and content hierarchy.
+
+### Forms
+
+Components:
+- Text input.
+- Textarea.
+- Select.
+- Date picker.
+- Checkbox.
+- Radio.
+- File upload.
+- Search.
+
+Each component needs:
+- Visible label.
+- Helper text where necessary.
+- Validation message.
+- Required indicator.
+- Disabled state.
+- Keyboard behavior.
+
+### Data Visualization
+
+Standardize:
+- Bar charts.
+- Line charts.
+- Donut charts.
+- Progress indicators.
+- Competency maps.
+- Skill heatmaps.
+
+Charts must include labels, legends, readable values, and useful explanations.
+
+Use charts only when they improve understanding.
+
+### Feedback Components
+
+Standardize:
+- Toasts.
+- Alerts.
+- Empty states.
+- Loading skeletons.
+- Error panels.
+- Confirmation dialogs.
+- Success messages.
+- Tooltips.
+
+All components must use NEXORA design tokens.
+
+Avoid creating duplicate components with slightly different styling.
+
+---
+
+## 14. RESPONSIVE DESIGN
+
+Test the application at:
+
+MOBILE:
+360px, 390px, 430px.
+
+TABLET:
+768px, 1024px.
+
+DESKTOP:
+1280px, 1440px.
+
+LARGE DESKTOP:
+1920px.
+
+### Responsive rules
+
+At 360–639px:
+- Single-column content.
+- Collapsible drawer navigation.
+- Stacked cards.
+- Full-width primary actions where useful.
+- Tables converted to readable cards or controlled horizontal scrolling.
+- No horizontal page overflow.
+
+At 640–1023px:
+- Two-column layouts where appropriate.
+- Compact navigation.
+- Simplified dashboard summaries.
+- Responsive graph controls.
+
+At 1024–1439px:
+- Desktop sidebar.
+- Responsive multi-column grids.
+- Full dashboard navigation.
+
+At 1440px and above:
+- Maximum content width 1440px.
+- Maintain readable line lengths.
+- Avoid stretching cards unnecessarily.
+- Use balanced whitespace.
+
+All pages must support mobile scrolling without hidden important information.
+
+Graph visualizations may use an accessible simplified view on mobile.
+
+---
+
+## 15. INTERACTION AND MICRO-INTERACTION RULES
+
+All interactive elements must work.
+
+Examples:
+
+Navigation:
+- Active menu state.
+- Route transitions.
+- Breadcrumb updates.
+- Back navigation.
+
+Forms:
+- Input validation.
+- Required fields.
+- Save and cancel.
+- Confirmation.
+- Success and error feedback.
+
+Cards:
+- Interactive cards navigate to actual destinations.
+- Static cards must not falsely appear clickable.
+
+Buttons:
+- Every button must have a defined action.
+- No decorative action buttons.
+- No empty click handlers.
+
+Loading:
+- Show skeletons or appropriate indicators.
+
+Data updates:
+- Refresh visible data after successful changes.
+- Provide optimistic updates only when rollback and error handling are implemented.
+
+Modal:
+- Correct focus management.
+- Escape handling where appropriate.
+- Accessible close controls.
+
+Animations:
+- 150ms ease-out for fast interactions.
+- 200ms ease-out for standard transitions.
+- Respect reduced-motion settings.
+- Avoid unnecessary motion.
+
+---
+
+## 16. ACCESSIBILITY
+
+Target WCAG 2.2 AA.
+
+Implement:
+
+- Sufficient text contrast.
+- Visible focus indicators.
+- Keyboard navigation.
+- Semantic HTML elements.
+- Correct heading hierarchy.
+- Accessible form labels.
+- Meaningful icon labels.
+- Alternative text for meaningful images.
+- Screen-reader-friendly status messages.
+- Accessible chart descriptions.
+- Reduced-motion support.
+- Large enough clickable targets.
+- No reliance on color alone.
+
+Check that all essential actions can be completed without a mouse.
+
+---
+
+## 17. CONTENT AND VISUAL DATA RULES
+
+Use accurate product language.
+
+Student:
+- Needs Further Development.
+- In Progress.
+- Proficient.
+- Not Assessed.
+- Recommended Next Action.
+
+Lecturer:
+- Learning Outcomes.
+- Competency Coverage.
+- Assessment Evidence.
+- Pending Review.
+- Class Learning Gaps.
+
+Industry:
+- Opportunity Status.
+- Skill Requirements.
+- Pending Approval.
+- Organization Verification.
+- Collaboration Progress.
+
+Do not use labels that stigmatize learners.
+
+Examples to avoid:
+- Weak Student.
+- Low Potential.
+- Bad Learner.
+- Poor Performance.
+
+Use DEMO data labels when actual institutional data is unavailable.
+
+Do not fabricate:
+- University performance.
+- Student scores.
+- Company partnerships.
+- Scholarship deadlines.
+- Opportunity availability.
+- Real assessment outcomes.
+
+---
+
+## 18. CROSS-PORTAL CONSISTENCY
+
+All portals must share:
+
+- NEXORA logo.
+- Primary colors.
+- Neutral palette.
+- Typography.
+- Spacing.
+- Border radius.
+- Buttons.
+- Input components.
+- Navigation architecture.
+- Notification system.
+- Modal behavior.
+- Table components.
+- Responsive rules.
+
+Differences are permitted only in:
+- Role-specific navigation.
+- Page content.
+- Available actions.
+- Permissions.
+- Data presentation.
+- Professional context.
+
+Student experience:
+Personal, encouraging, clear.
+
+Lecturer experience:
+Professional, analytical, actionable.
+
+Industry experience:
+Business-oriented, credible, efficient.
+
+Do not assign unrelated primary color systems to each portal.
+
+---
+
+## 19. TECHNICAL IMPLEMENTATION CONSTRAINTS
+
+Continue in the existing NEXORA application.
+
+Use the current:
+- React.
+- TypeScript.
+- Existing routing.
+- Firebase Authentication.
+- Cloud Firestore.
+- Shared server services.
+- Role-based access architecture.
+
+Do not:
+- Create a new project.
+- Replace existing authentication.
+- Rebuild all dashboards from scratch.
+- Remove existing database records.
+- Change recommendation algorithms.
+- Modify official academic data.
+- Modify Firestore security rules without a demonstrated need.
+- Bypass backend authorization.
+- Replace the NEXORA brand.
+
+Reuse the existing component architecture.
+
+Refactor duplicated components into reusable components where safe.
+
+Preserve all existing data behavior.
+
+Do not introduce a new UI library without a clear technical requirement.
+
+If an existing integration is not operational, document it rather than inventing functionality.
+
+---
+
+## 20. UI/UX TESTING
+
+Perform a page-by-page visual and functional review.
+
+### Visual Regression
+
+Check:
+- Typography consistency.
+- Spacing.
+- Card alignment.
+- Button size.
+- Navigation.
+- Color consistency.
+- Form alignment.
+- Responsive behavior.
+
+### Functional Testing
+
+Verify:
+- Login.
+- Logout.
+- Workspace switching.
+- Navigation.
+- Search.
+- Filters.
+- Forms.
+- Modals.
+- Tables.
+- Charts.
+- File uploads.
+- Save actions.
+- Submission.
+- Review.
+- Approval.
+- Feedback.
+
+### Responsive Testing
+
+Test:
+- 360px width.
+- 390px width.
+- 768px width.
+- 1024px width.
+- 1440px width.
+
+### Accessibility Testing
+
+Check:
+- Keyboard operation.
+- Visible focus.
+- Contrast.
+- Form labels.
+- Screen reader semantics.
+- Reduced motion.
+
+Do not mark an interaction as PASS based only on its visual appearance.
+
+---
+
+## 21. IMPLEMENTATION PROCESS
+
+STEP 1 — APPLICATION AUDIT
+
+Inspect the existing codebase and current interface.
+
+List pages, routes, components, and current interaction behavior.
+
+STEP 2 — DESIGN GAP ANALYSIS
+
+Compare the implementation against the approved NEXORA brand tokens and visual reference.
+
+Identify design mismatches.
+
+STEP 3 — DESIGN SYSTEM CONSOLIDATION
+
+Standardize reusable styles and components.
+
+Do not change approved brand tokens.
+
+STEP 4 — PORTAL REFINEMENT
+
+Refine:
+- Student Portal.
+- Lecturer Portal.
+- Industry Portal.
+- Shared Authentication.
+
+STEP 5 — RESPONSIVE IMPLEMENTATION
+
+Adapt layouts to all specified viewport widths.
+
+STEP 6 — INTERACTION REVIEW
+
+Test all important actions and states.
+
+STEP 7 — REGRESSION TESTING
+
+Ensure existing business logic, database interactions, authentication, and permissions remain intact.
+
+---
+
+## 22. OUTPUT REQUIREMENTS
+
+Before modifying the application, return:
+
+1. Existing UI audit.
+2. Page inventory.
+3. Current design system assessment.
+4. Component duplication report.
+5. Responsive issues.
+6. Accessibility gaps.
+7. Proposed refinement plan.
+
+Then implement the refinements incrementally.
+
+After implementation, return:
+
+- Updated shared design system.
+- Updated application shell.
+- Refined Student Portal.
+- Refined Lecturer Portal.
+- Refined Industry Portal.
+- Refined shared login.
+- Standardized component library.
+- Responsive implementation.
+- Interaction testing results.
+- Accessibility review.
+- Visual regression report.
+- PASS/FAIL checklist.
+- Remaining TODO items.
+
+Do not delete features to achieve a cleaner appearance.
+
+Do not report visual or functional tests as PASS without actual evidence.
+
+CRITICAL RULE:
+
+NEXORA MUST LOOK AND FEEL LIKE ONE PROFESSIONAL INSTITUTIONAL LEARNING INTELLIGENCE PLATFORM.
+
+PRESERVE THE APPROVED NEXORA BRAND IDENTITY AND EXISTING FUNCTIONALITY.
+
+REFINE THE USER EXPERIENCE WITHOUT REBUILDING THE APPLICATION OR BREAKING EXISTING WORKFLOWS.
+</output_format>

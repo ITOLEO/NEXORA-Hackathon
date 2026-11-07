@@ -1,0 +1,6 @@
+{
+  "name": "NEXORA - Institutional Learning Intelligence",
+  "description": "Connecting university curricula, student competencies, personalized learning pathways, and real-world opportunities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
